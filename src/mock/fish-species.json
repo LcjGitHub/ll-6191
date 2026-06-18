@@ -1,0 +1,19 @@
+[
+  { "id": "carp", "name": "鲤鱼", "habitat": "江河湖泊", "description": "常见淡水鱼，体型较大，喜底栖觅食" },
+  { "id": "grass-carp", "name": "草鱼", "habitat": "江河湖泊", "description": "以水草为主食，游速较快" },
+  { "id": "crucian", "name": "鲫鱼", "habitat": "各类水域", "description": "分布最广的淡水鱼之一，适应性强" },
+  { "id": "bream", "name": "鳊鱼", "habitat": "湖泊水库", "description": "体侧扁，喜中上层活动" },
+  { "id": "black-carp", "name": "青鱼", "habitat": "江河湖泊", "description": "四大家鱼之一，喜食螺蛳" },
+  { "id": "silver-carp", "name": "鲢鱼", "habitat": "江河湖泊", "description": "滤食性鱼类，喜中上层" },
+  { "id": "bighead-carp", "name": "鳙鱼", "habitat": "江河湖泊", "description": "俗称胖头鱼，头部较大" },
+  { "id": "snakehead", "name": "黑鱼", "habitat": "静水水域", "description": "凶猛肉食性，喜伏击" },
+  { "id": "bass", "name": "鲈鱼", "habitat": "江河入海口", "description": "路亚热门目标，活性高" },
+  { "id": "topmouth-culter", "name": "翘嘴", "habitat": "大型湖泊", "description": "中上层掠食性，喜追饵" },
+  { "id": "yellow-catfish", "name": "黄颡鱼", "habitat": "江河溪流", "description": "俗称黄辣丁，夜行性强" },
+  { "id": "tilapia", "name": "罗非鱼", "habitat": "南方水域", "description": "热带引进种，繁殖力强" },
+  { "id": "catfish", "name": "鲶鱼", "habitat": "静水淤泥区", "description": "夜行性底栖，嗅觉灵敏" },
+  { "id": "mandarin-fish", "name": "鳜鱼", "habitat": "清澈流水", "description": "名贵肉食鱼，喜伏击" },
+  { "id": "white-bait", "name": "白条", "habitat": "各类水域", "description": "小型群游鱼，飞铅常用目标" },
+  { "id": "sharpbelly", "name": "餐条", "habitat": "溪流浅滩", "description": "体型小，抢食积极" },
+  { "id": "red-eye-trout", "name": "赤眼鳟", "habitat": "山溪水库", "description": "冷水性 trout 类，对水质要求高" }
+]
