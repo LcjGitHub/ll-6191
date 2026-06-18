@@ -30,7 +30,8 @@ import { WEATHER_COLORS, WEATHER_OPTIONS } from '@/constants/weather';
 import { FISHING_METHOD_COLORS, FISHING_METHOD_OPTIONS } from '@/constants/fishingMethod';
 import { getFishSpecies } from '@/utils/fishSpecies';
 import { filterRecords, hasActiveFilter } from '@/utils/filter';
-import type { WeatherOption } from '@/types/record';
+import { DeleteConfirmModal } from '@/components/DeleteConfirmModal';
+import type { WeatherOption, FishingRecord } from '@/types/record';
 
 const VALID_FISHING_METHODS = new Set(FISHING_METHOD_OPTIONS);
 
@@ -53,6 +54,7 @@ export function TimelinePage() {
 
   const [selectedFish, setSelectedFish] = useState<string | null>(null);
   const [selectedWeather, setSelectedWeather] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<FishingRecord | null>(null);
 
   const filteredRecords = useMemo(() => {
     return filterRecords(sortedRecords, {
@@ -69,6 +71,21 @@ export function TimelinePage() {
   const handleClearFilter = () => {
     setSelectedFish(null);
     setSelectedWeather(null);
+  };
+
+  const handleDeleteClick = (record: FishingRecord) => {
+    setDeleteTarget(record);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (deleteTarget) {
+      removeRecord(deleteTarget.id);
+      setDeleteTarget(null);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteTarget(null);
   };
 
   if (sortedRecords.length === 0) {
@@ -200,7 +217,7 @@ export function TimelinePage() {
                       color="red"
                       size="sm"
                       aria-label="删除记录"
-                      onClick={() => removeRecord(record.id)}
+                      onClick={() => handleDeleteClick(record)}
                     >
                       <IconTrash size={14} />
                     </ActionIcon>
@@ -240,6 +257,14 @@ export function TimelinePage() {
           ))}
         </Timeline>
       )}
+
+      <DeleteConfirmModal
+        opened={deleteTarget !== null}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        fishSpeciesName={deleteTarget?.fishSpeciesName ?? ''}
+        date={deleteTarget?.date ?? ''}
+      />
     </Stack>
   );
 }
