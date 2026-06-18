@@ -16,7 +16,7 @@ export function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<TimelinePage />} />
           <Route path="/new" element={<NewRecordPage />} />
-          <Route path="/edit/:id" element={<EditRecordPage />} />
+          <Route path="/编辑/:id" element={<EditRecordPage />} />
           <Route path="/统计" element={<StatisticsPage />} />
           <Route path="/图鉴" element={<FishGuidePage />} />
           <Route path="/收藏" element={<FavoritesPage />} />

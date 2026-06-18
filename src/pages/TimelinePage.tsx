@@ -191,7 +191,7 @@ export function TimelinePage() {
                       color="blue"
                       size="sm"
                       aria-label="编辑记录"
-                      onClick={() => navigate(`/edit/${record.id}`)}
+                      onClick={() => navigate(`/编辑/${record.id}`)}
                     >
                       <IconEdit size={14} />
                     </ActionIcon>

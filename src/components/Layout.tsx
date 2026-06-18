@@ -8,6 +8,8 @@ export function Layout() {
   const navigate = useNavigate();
   const decodedPath = decodeURIComponent(location.pathname);
   const isNewPage = decodedPath === '/new';
+  const isEditPage = decodedPath.startsWith('/编辑/');
+  const isFormPage = isNewPage || isEditPage;
   const isStatisticsPage = decodedPath === '/统计';
   const isGuidePage = decodedPath === '/图鉴';
   const isFavoritesPage = decodedPath === '/收藏';
@@ -45,7 +47,7 @@ export function Layout() {
               </Title>
             </Group>
 
-            {!isNewPage && (
+            {!isFormPage && (
               <Box style={{ flex: 1 }} mx="sm">
                 <Group justify="center">
                   <SegmentedControl
@@ -105,7 +107,7 @@ export function Layout() {
               </Box>
             )}
 
-            {!isNewPage && (
+            {!isFormPage && (
               <Button
                 component={Link}
                 to="/new"
@@ -116,7 +118,7 @@ export function Layout() {
                 新建记录
               </Button>
             )}
-            {isNewPage && (
+            {isFormPage && (
               <Button component={Link} to="/" variant="subtle" color="gray">
                 返回时间线
               </Button>

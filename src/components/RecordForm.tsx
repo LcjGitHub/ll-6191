@@ -41,9 +41,12 @@ export function RecordForm({ mode = 'create' }: RecordFormProps) {
   const records = useRecordStore((state) => state.records);
   const favorites = useFavoriteStore((state) => state.favorites);
   const [favoriteValue, setFavoriteValue] = useState<string | null>(null);
+  const [hasHydrated, setHasHydrated] = useState(false);
 
   const isEditMode = mode === 'edit';
-  const editingRecord = isEditMode && id ? records.find((r) => r.id === id) : undefined;
+  const editingRecord = isEditMode && id && hasHydrated
+    ? records.find((r) => r.id === id)
+    : undefined;
 
   const favoriteOptions = favorites.map((f) => ({
     value: f.name,
@@ -70,7 +73,20 @@ export function RecordForm({ mode = 'create' }: RecordFormProps) {
   });
 
   useEffect(() => {
-    if (isEditMode && editingRecord) {
+    if (useRecordStore.persist.hasHydrated()) {
+      setHasHydrated(true);
+      return;
+    }
+    const unsub = useRecordStore.persist.onFinishHydration(() => {
+      setHasHydrated(true);
+    });
+    return () => {
+      unsub();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isEditMode && hasHydrated && editingRecord) {
       reset({
         fishSpeciesId: editingRecord.fishSpeciesId,
         spot: editingRecord.spot,
@@ -81,7 +97,7 @@ export function RecordForm({ mode = 'create' }: RecordFormProps) {
         date: dayjs(editingRecord.date).toDate(),
       });
     }
-  }, [isEditMode, editingRecord, reset]);
+  }, [isEditMode, hasHydrated, editingRecord, reset]);
 
   const onSubmit = handleSubmit((values) => {
     const species = getFishSpeciesById(values.fishSpeciesId);
@@ -106,6 +122,14 @@ export function RecordForm({ mode = 'create' }: RecordFormProps) {
 
     navigate('/');
   });
+
+  if (isEditMode && !hasHydrated) {
+    return (
+      <Paper withBorder shadow="sm" p="lg" radius="md">
+        <Text c="dimmed">加载中...</Text>
+      </Paper>
+    );
+  }
 
   if (isEditMode && !editingRecord) {
     return (
