@@ -4,6 +4,7 @@ import { TimelinePage } from '@/pages/TimelinePage';
 import { NewRecordPage } from '@/pages/NewRecordPage';
 import { StatisticsPage } from '@/pages/StatisticsPage';
 import { FishGuidePage } from '@/pages/FishGuidePage';
+import { FavoritesPage } from '@/pages/FavoritesPage';
 
 /** 路由配置 */
 export function App() {
@@ -15,6 +16,7 @@ export function App() {
           <Route path="/new" element={<NewRecordPage />} />
           <Route path="/统计" element={<StatisticsPage />} />
           <Route path="/图鉴" element={<FishGuidePage />} />
+          <Route path="/收藏" element={<FavoritesPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

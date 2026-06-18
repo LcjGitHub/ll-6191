@@ -14,11 +14,12 @@ import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
-import { IconCalendar, IconCloud, IconScale, IconFish } from '@tabler/icons-react';
+import { IconCalendar, IconCloud, IconScale, IconFish, IconStar } from '@tabler/icons-react';
 import { recordFormSchema, type RecordFormSchema } from '@/schemas/recordSchema';
 import { WEATHER_OPTIONS } from '@/constants/weather';
 import { getFishSpecies, getFishSpeciesById } from '@/utils/fishSpecies';
 import { useRecordStore } from '@/store/recordStore';
+import { useFavoriteStore } from '@/store/favoriteStore';
 
 const fishOptions = getFishSpecies().map((species) => ({
   value: species.id,
@@ -29,10 +30,17 @@ const fishOptions = getFishSpecies().map((species) => ({
 export function RecordForm() {
   const navigate = useNavigate();
   const addRecord = useRecordStore((state) => state.addRecord);
+  const favorites = useFavoriteStore((state) => state.favorites);
+
+  const favoriteOptions = favorites.map((f) => ({
+    value: f.name,
+    label: f.name,
+  }));
 
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<RecordFormSchema>({
     resolver: zodResolver(recordFormSchema),
@@ -94,15 +102,32 @@ export function RecordForm() {
               name="spot"
               control={control}
               render={({ field }) => (
-                <Textarea
-                  {...field}
-                  label="钓点"
-                  description="描述钓点位置"
-                  placeholder="如：城东水库北岸浅滩"
-                  minRows={3}
-                  autosize
-                  error={errors.spot?.message}
-                />
+                <>
+                  <Textarea
+                    {...field}
+                    label="钓点"
+                    description="描述钓点位置"
+                    placeholder="如：城东水库北岸浅滩"
+                    minRows={3}
+                    autosize
+                    error={errors.spot?.message}
+                  />
+                  {favoriteOptions.length > 0 && (
+                    <Select
+                      label="从收藏填入"
+                      placeholder="选择收藏的钓点"
+                      data={favoriteOptions}
+                      searchable
+                      leftSection={<IconStar size={16} />}
+                      onChange={(value) => {
+                        if (value) {
+                          field.onChange(value);
+                        }
+                      }}
+                      nothingFoundMessage="未找到收藏钓点"
+                    />
+                  )}
+                </>
               )}
             />
 

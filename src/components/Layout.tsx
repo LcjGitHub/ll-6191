@@ -1,6 +1,6 @@
 import { AppShell, Group, Title, Button, Container, SegmentedControl, Box } from '@mantine/core';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { IconFish, IconPlus, IconChartBar, IconTimeline, IconBook } from '@tabler/icons-react';
+import { IconFish, IconPlus, IconChartBar, IconTimeline, IconBook, IconStar } from '@tabler/icons-react';
 
 /** 应用布局：顶栏导航 + 内容区 */
 export function Layout() {
@@ -10,16 +10,20 @@ export function Layout() {
   const isNewPage = decodedPath === '/new';
   const isStatisticsPage = decodedPath === '/统计';
   const isGuidePage = decodedPath === '/图鉴';
+  const isFavoritesPage = decodedPath === '/收藏';
 
   let navValue = 'timeline';
   if (isStatisticsPage) navValue = 'statistics';
   if (isGuidePage) navValue = 'guide';
+  if (isFavoritesPage) navValue = 'favorites';
 
   const handleNavChange = (value: string) => {
     if (value === 'statistics') {
       navigate('/统计');
     } else if (value === 'guide') {
       navigate('/图鉴');
+    } else if (value === 'favorites') {
+      navigate('/收藏');
     } else {
       navigate('/');
     }
@@ -50,6 +54,15 @@ export function Layout() {
                           <Group gap={6} wrap="nowrap">
                             <IconTimeline size={14} />
                             <Box>时间线</Box>
+                          </Group>
+                        ),
+                      },
+                      {
+                        value: 'favorites',
+                        label: (
+                          <Group gap={6} wrap="nowrap">
+                            <IconStar size={14} />
+                            <Box>收藏</Box>
                           </Group>
                         ),
                       },
