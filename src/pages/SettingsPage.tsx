@@ -18,6 +18,8 @@ import {
   downloadRecordsAsFile,
   parseImportedText,
   mergeRecords,
+  calculateMergeStats,
+  type ParseResult,
 } from '@/utils/importExport';
 import type { FishingRecord } from '@/types/record';
 
@@ -28,8 +30,11 @@ export function SettingsPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [warning, setWarning] = useState('');
   const [confirmOpened, { open: openConfirm, close: closeConfirm }] = useDisclosure(false);
   const [pendingImport, setPendingImport] = useState<FishingRecord[] | null>(null);
+  const [pendingParseResult, setPendingParseResult] = useState<ParseResult | null>(null);
+  const [pendingStats, setPendingStats] = useState<{ newCount: number; duplicateCount: number } | null>(null);
   const [fileName, setFileName] = useState('');
 
   const handleExport = () => {
@@ -40,11 +45,13 @@ export function SettingsPage() {
     downloadRecordsAsFile(records);
     setSuccess(`已导出 ${records.length} 条记录`);
     setError('');
+    setWarning('');
   };
 
   const handleImportClick = () => {
     setError('');
     setSuccess('');
+    setWarning('');
     fileInputRef.current?.click();
   };
 
@@ -55,15 +62,22 @@ export function SettingsPage() {
     setFileName(file.name);
     setError('');
     setSuccess('');
+    setWarning('');
 
     try {
       const text = await file.text();
-      const imported = parseImportedText(text);
-      if (imported.length === 0) {
+      const result = parseImportedText(text);
+      if (result.validRecords.length === 0) {
         setError('文件中没有有效的记录');
         return;
       }
-      setPendingImport(imported);
+      if (result.invalidCount > 0) {
+        setWarning(`检测到 ${result.invalidCount} 条无效记录已被过滤，仅导入 ${result.validRecords.length} 条有效记录`);
+      }
+      const stats = calculateMergeStats(records, result.validRecords);
+      setPendingImport(result.validRecords);
+      setPendingParseResult(result);
+      setPendingStats(stats);
       openConfirm();
     } catch (err) {
       setError(err instanceof Error ? err.message : '导入失败');
@@ -75,16 +89,20 @@ export function SettingsPage() {
   };
 
   const confirmImport = () => {
-    if (!pendingImport) return;
+    if (!pendingImport || !pendingParseResult || !pendingStats) return;
+
+    const stats = pendingStats;
+    closeConfirm();
+    setPendingImport(null);
+    setPendingParseResult(null);
+    setPendingStats(null);
 
     const merged = mergeRecords(records, pendingImport);
-    const newCount = merged.length - records.length;
     importRecords(merged);
-    setPendingImport(null);
-    closeConfirm();
+
     setSuccess(
-      newCount > 0
-        ? `导入成功，新增 ${newCount} 条记录`
+      stats.newCount > 0
+        ? `导入成功，新增 ${stats.newCount} 条记录`
         : '导入完成，没有新增记录（已全部存在）',
     );
 
@@ -94,8 +112,10 @@ export function SettingsPage() {
   };
 
   const cancelImport = () => {
-    setPendingImport(null);
     closeConfirm();
+    setPendingImport(null);
+    setPendingParseResult(null);
+    setPendingStats(null);
   };
 
   return (
@@ -110,6 +130,11 @@ export function SettingsPage() {
       {error && (
         <Notification color="red" onClose={() => setError('')} withCloseButton>
           {error}
+        </Notification>
+      )}
+      {warning && (
+        <Notification color="orange" onClose={() => setWarning('')} withCloseButton>
+          {warning}
         </Notification>
       )}
       {success && (
@@ -187,19 +212,39 @@ export function SettingsPage() {
             <Text span fw={600}>
               「{fileName}」
             </Text>
-            中包含
-            <Text span fw={600} c="teal">
-              {' '}{pendingImport?.length ?? 0}{' '}
-            </Text>
-            条记录。
           </Text>
-          <Text size="sm">
-            导入后将与现有
-            <Text span fw={600}>
-              {' '}{records.length}{' '}
+          <Group justify="space-between">
+            <Text size="sm" c="dimmed">
+              文件记录总数
             </Text>
-            条记录按唯一标识合并去重，是否继续？
-          </Text>
+            <Text size="sm" fw={600}>
+              {pendingParseResult?.totalCount ?? 0} 条
+            </Text>
+          </Group>
+          <Group justify="space-between">
+            <Text size="sm" c="dimmed">
+              无效记录（已过滤）
+            </Text>
+            <Text size="sm" fw={600} c="orange">
+              {pendingParseResult?.invalidCount ?? 0} 条
+            </Text>
+          </Group>
+          <Group justify="space-between">
+            <Text size="sm" c="dimmed">
+              预计新增
+            </Text>
+            <Text size="sm" fw={600} c="teal">
+              {pendingStats?.newCount ?? 0} 条
+            </Text>
+          </Group>
+          <Group justify="space-between">
+            <Text size="sm" c="dimmed">
+              重复跳过
+            </Text>
+            <Text size="sm" fw={600} c="gray">
+              {pendingStats?.duplicateCount ?? 0} 条
+            </Text>
+          </Group>
           <Group justify="flex-end" gap="xs">
             <Button variant="default" onClick={cancelImport}>
               取消
