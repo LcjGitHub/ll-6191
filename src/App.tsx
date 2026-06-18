@@ -5,6 +5,7 @@ import { NewRecordPage } from '@/pages/NewRecordPage';
 import { StatisticsPage } from '@/pages/StatisticsPage';
 import { FishGuidePage } from '@/pages/FishGuidePage';
 import { FavoritesPage } from '@/pages/FavoritesPage';
+import { SettingsPage } from '@/pages/SettingsPage';
 
 /** 路由配置 */
 export function App() {
@@ -17,6 +18,7 @@ export function App() {
           <Route path="/统计" element={<StatisticsPage />} />
           <Route path="/图鉴" element={<FishGuidePage />} />
           <Route path="/收藏" element={<FavoritesPage />} />
+          <Route path="/设置" element={<SettingsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

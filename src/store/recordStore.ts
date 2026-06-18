@@ -7,6 +7,7 @@ interface RecordState {
   records: FishingRecord[];
   addRecord: (record: Omit<FishingRecord, 'id' | 'createdAt'>) => void;
   removeRecord: (id: string) => void;
+  importRecords: (records: FishingRecord[]) => void;
 }
 
 /** 钓鱼记录 store，持久化至 localStorage */
@@ -28,6 +29,10 @@ export const useRecordStore = create<RecordState>()(
       removeRecord: (id) =>
         set((state) => ({
           records: state.records.filter((r) => r.id !== id),
+        })),
+      importRecords: (records) =>
+        set(() => ({
+          records,
         })),
     }),
     {
