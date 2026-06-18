@@ -15,6 +15,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
 import { IconCalendar, IconCloud, IconScale, IconFish, IconStar } from '@tabler/icons-react';
+import { useState } from 'react';
 import { recordFormSchema, type RecordFormSchema } from '@/schemas/recordSchema';
 import { WEATHER_OPTIONS } from '@/constants/weather';
 import { getFishSpecies, getFishSpeciesById } from '@/utils/fishSpecies';
@@ -31,6 +32,7 @@ export function RecordForm() {
   const navigate = useNavigate();
   const addRecord = useRecordStore((state) => state.addRecord);
   const favorites = useFavoriteStore((state) => state.favorites);
+  const [favoriteValue, setFavoriteValue] = useState<string | null>(null);
 
   const favoriteOptions = favorites.map((f) => ({
     value: f.name,
@@ -102,7 +104,7 @@ export function RecordForm() {
               name="spot"
               control={control}
               render={({ field }) => (
-                <>
+                <Stack gap="md">
                   <Textarea
                     {...field}
                     label="钓点"
@@ -118,16 +120,18 @@ export function RecordForm() {
                       placeholder="选择收藏的钓点"
                       data={favoriteOptions}
                       searchable
+                      value={favoriteValue}
                       leftSection={<IconStar size={16} />}
                       onChange={(value) => {
                         if (value) {
-                          field.onChange(value);
+                          setValue('spot', value, { shouldDirty: true });
                         }
+                        setFavoriteValue(null);
                       }}
                       nothingFoundMessage="未找到收藏钓点"
                     />
                   )}
-                </>
+                </Stack>
               )}
             />
 

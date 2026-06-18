@@ -15,19 +15,24 @@ interface FavoriteState {
 
 export const useFavoriteStore = create<FavoriteState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       favorites: [],
-      addFavorite: (name) =>
+      addFavorite: (name) => {
+        const trimmed = name.trim();
+        if (!trimmed) return;
+        const exists = get().favorites.some((f) => f.name === trimmed);
+        if (exists) return;
         set((state) => ({
           favorites: [
             {
               id: crypto.randomUUID(),
-              name: name.trim(),
+              name: trimmed,
               createdAt: new Date().toISOString(),
             },
             ...state.favorites,
           ],
-        })),
+        }));
+      },
       removeFavorite: (id) =>
         set((state) => ({
           favorites: state.favorites.filter((f) => f.id !== id),
