@@ -13,9 +13,9 @@ import { DatePickerInput } from '@mantine/dates';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { IconCalendar, IconCloud, IconScale, IconFish, IconStar, IconAnchor, IconClipboard } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { recordFormSchema, type RecordFormSchema } from '@/schemas/recordSchema';
 import { WEATHER_OPTIONS } from '@/constants/weather';
 import { FISHING_METHOD_OPTIONS } from '@/constants/fishingMethod';
@@ -28,12 +28,22 @@ const fishOptions = getFishSpecies().map((species) => ({
   label: species.name,
 }));
 
-/** 新建钓鱼记录表单 */
-export function RecordForm() {
+interface RecordFormProps {
+  mode?: 'create' | 'edit';
+}
+
+/** 钓鱼记录表单，支持新建和编辑模式 */
+export function RecordForm({ mode = 'create' }: RecordFormProps) {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   const addRecord = useRecordStore((state) => state.addRecord);
+  const updateRecord = useRecordStore((state) => state.updateRecord);
+  const records = useRecordStore((state) => state.records);
   const favorites = useFavoriteStore((state) => state.favorites);
   const [favoriteValue, setFavoriteValue] = useState<string | null>(null);
+
+  const isEditMode = mode === 'edit';
+  const editingRecord = isEditMode && id ? records.find((r) => r.id === id) : undefined;
 
   const favoriteOptions = favorites.map((f) => ({
     value: f.name,
@@ -44,6 +54,7 @@ export function RecordForm() {
     control,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<RecordFormSchema>({
     resolver: zodResolver(recordFormSchema),
@@ -58,11 +69,25 @@ export function RecordForm() {
     },
   });
 
+  useEffect(() => {
+    if (isEditMode && editingRecord) {
+      reset({
+        fishSpeciesId: editingRecord.fishSpeciesId,
+        spot: editingRecord.spot,
+        weather: editingRecord.weather,
+        fishingMethod: editingRecord.fishingMethod,
+        notes: editingRecord.notes,
+        weight: editingRecord.weight,
+        date: dayjs(editingRecord.date).toDate(),
+      });
+    }
+  }, [isEditMode, editingRecord, reset]);
+
   const onSubmit = handleSubmit((values) => {
     const species = getFishSpeciesById(values.fishSpeciesId);
     if (!species) return;
 
-    addRecord({
+    const recordData = {
       fishSpeciesId: values.fishSpeciesId,
       fishSpeciesName: species.name,
       spot: values.spot.trim(),
@@ -71,18 +96,32 @@ export function RecordForm() {
       notes: values.notes.trim(),
       weight: values.weight,
       date: dayjs(values.date).format('YYYY-MM-DD'),
-    });
+    };
+
+    if (isEditMode && id) {
+      updateRecord(id, recordData);
+    } else {
+      addRecord(recordData);
+    }
 
     navigate('/');
   });
+
+  if (isEditMode && !editingRecord) {
+    return (
+      <Paper withBorder shadow="sm" p="lg" radius="md">
+        <Text c="dimmed">未找到该记录</Text>
+      </Paper>
+    );
+  }
 
   return (
     <Paper withBorder shadow="sm" p="lg" radius="md">
       <Stack gap="md">
         <div>
-          <Title order={4}>新建钓鱼记录</Title>
+          <Title order={4}>{isEditMode ? '编辑钓鱼记录' : '新建钓鱼记录'}</Title>
           <Text size="sm" c="dimmed">
-            填写钓获信息，保存后将出现在时间线中
+            {isEditMode ? '修改钓获信息，保存后将更新时间线中的记录' : '填写钓获信息，保存后将出现在时间线中'}
           </Text>
         </div>
 
@@ -229,7 +268,7 @@ export function RecordForm() {
                 取消
               </Button>
               <Button type="submit" color="teal" loading={isSubmitting}>
-                保存记录
+                {isEditMode ? '保存修改' : '保存记录'}
               </Button>
             </Group>
           </Stack>

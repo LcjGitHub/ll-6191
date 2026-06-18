@@ -11,7 +11,7 @@ import {
   Center,
   Select,
 } from '@mantine/core';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   IconFish,
   IconCloud,
@@ -21,6 +21,7 @@ import {
   IconPlus,
   IconClipboard,
   IconFilterOff,
+  IconEdit,
 } from '@tabler/icons-react';
 import { useState, useMemo } from 'react';
 import dayjs from 'dayjs';
@@ -48,6 +49,7 @@ export function TimelinePage() {
   const records = useRecordStore((state) => state.records);
   const removeRecord = useRecordStore((state) => state.removeRecord);
   const sortedRecords = getSortedRecords(records);
+  const navigate = useNavigate();
 
   const [selectedFish, setSelectedFish] = useState<string | null>(null);
   const [selectedWeather, setSelectedWeather] = useState<string | null>(null);
@@ -183,15 +185,26 @@ export function TimelinePage() {
                       </Badge>
                     )}
                   </Group>
-                  <ActionIcon
-                    variant="subtle"
-                    color="red"
-                    size="sm"
-                    aria-label="删除记录"
-                    onClick={() => removeRecord(record.id)}
-                  >
-                    <IconTrash size={14} />
-                  </ActionIcon>
+                  <Group gap={4} wrap="nowrap">
+                    <ActionIcon
+                      variant="subtle"
+                      color="blue"
+                      size="sm"
+                      aria-label="编辑记录"
+                      onClick={() => navigate(`/edit/${record.id}`)}
+                    >
+                      <IconEdit size={14} />
+                    </ActionIcon>
+                    <ActionIcon
+                      variant="subtle"
+                      color="red"
+                      size="sm"
+                      aria-label="删除记录"
+                      onClick={() => removeRecord(record.id)}
+                    >
+                      <IconTrash size={14} />
+                    </ActionIcon>
+                  </Group>
                 </Group>
               }
             >

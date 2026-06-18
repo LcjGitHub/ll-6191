@@ -6,6 +6,7 @@ import type { FishingRecord } from '@/types/record';
 interface RecordState {
   records: FishingRecord[];
   addRecord: (record: Omit<FishingRecord, 'id' | 'createdAt'>) => void;
+  updateRecord: (id: string, record: Omit<FishingRecord, 'id' | 'createdAt'>) => void;
   removeRecord: (id: string) => void;
   importRecords: (records: FishingRecord[]) => void;
 }
@@ -35,6 +36,12 @@ export const useRecordStore = create<RecordState>()(
             },
             ...state.records,
           ],
+        })),
+      updateRecord: (id, record) =>
+        set((state) => ({
+          records: state.records.map((r) =>
+            r.id === id ? { ...r, ...record } : r,
+          ),
         })),
       removeRecord: (id) =>
         set((state) => ({
