@@ -55,6 +55,7 @@ export function TimelinePage() {
   const [selectedFish, setSelectedFish] = useState<string | null>(null);
   const [selectedWeather, setSelectedWeather] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<FishingRecord | null>(null);
+  const [modalOpened, setModalOpened] = useState(false);
 
   const filteredRecords = useMemo(() => {
     return filterRecords(sortedRecords, {
@@ -75,17 +76,23 @@ export function TimelinePage() {
 
   const handleDeleteClick = (record: FishingRecord) => {
     setDeleteTarget(record);
+    setModalOpened(true);
   };
 
   const handleDeleteConfirm = () => {
     if (deleteTarget) {
       removeRecord(deleteTarget.id);
-      setDeleteTarget(null);
+      setModalOpened(false);
     }
   };
 
   const handleDeleteCancel = () => {
+    setModalOpened(false);
+  };
+
+  const handleExitTransitionEnd = () => {
     setDeleteTarget(null);
+    setModalOpened(false);
   };
 
   if (sortedRecords.length === 0) {
@@ -259,8 +266,9 @@ export function TimelinePage() {
       )}
 
       <DeleteConfirmModal
-        opened={deleteTarget !== null}
+        opened={modalOpened}
         onClose={handleDeleteCancel}
+        onExitTransitionEnd={handleExitTransitionEnd}
         onConfirm={handleDeleteConfirm}
         fishSpeciesName={deleteTarget?.fishSpeciesName ?? ''}
         date={deleteTarget?.date ?? ''}

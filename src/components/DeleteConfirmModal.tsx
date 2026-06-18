@@ -5,14 +5,17 @@ import dayjs from 'dayjs';
 interface DeleteConfirmModalProps {
   opened: boolean;
   onClose: () => void;
+  onExitTransitionEnd: () => void;
   onConfirm: () => void;
   fishSpeciesName: string;
   date: string;
 }
 
+/** 删除钓鱼记录确认对话框 */
 export function DeleteConfirmModal({
   opened,
   onClose,
+  onExitTransitionEnd,
   onConfirm,
   fishSpeciesName,
   date,
@@ -21,6 +24,8 @@ export function DeleteConfirmModal({
     <Modal
       opened={opened}
       onClose={onClose}
+      onExitTransitionEnd={onExitTransitionEnd}
+      closeButtonProps={{ 'aria-label': '关闭确认对话框' }}
       title={
         <Group gap="xs">
           <IconAlertTriangle size={20} color="var(--mantine-color-red-6)" />
