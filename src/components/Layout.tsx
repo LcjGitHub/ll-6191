@@ -7,13 +7,13 @@ export function Layout() {
   const location = useLocation();
   const navigate = useNavigate();
   const isNewPage = location.pathname === '/new';
-  const isStatisticsPage = location.pathname === '/statistics';
+  const isStatisticsPage = location.pathname === '/统计';
 
   const navValue = isStatisticsPage ? 'statistics' : 'timeline';
 
   const handleNavChange = (value: string) => {
     if (value === 'statistics') {
-      navigate('/statistics');
+      navigate('/统计');
     } else {
       navigate('/');
     }

@@ -12,7 +12,7 @@ export function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<TimelinePage />} />
           <Route path="/new" element={<NewRecordPage />} />
-          <Route path="/statistics" element={<StatisticsPage />} />
+          <Route path="/统计" element={<StatisticsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
