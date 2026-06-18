@@ -6,9 +6,10 @@ import { IconFish, IconPlus, IconChartBar, IconTimeline, IconBook } from '@table
 export function Layout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const isNewPage = location.pathname === '/new';
-  const isStatisticsPage = location.pathname === '/统计';
-  const isGuidePage = location.pathname === '/图鉴';
+  const decodedPath = decodeURIComponent(location.pathname);
+  const isNewPage = decodedPath === '/new';
+  const isStatisticsPage = decodedPath === '/统计';
+  const isGuidePage = decodedPath === '/图鉴';
 
   let navValue = 'timeline';
   if (isStatisticsPage) navValue = 'statistics';

@@ -37,7 +37,16 @@ export function FishGuidePage() {
               shadow="sm"
               padding="md"
               radius="md"
+              role="button"
+              tabIndex={0}
+              aria-label={`查看${fish.name}详情`}
               onClick={() => handleCardClick(fish)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleCardClick(fish);
+                }
+              }}
               style={{ cursor: 'pointer', transition: 'all 0.2s ease' }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
@@ -60,7 +69,7 @@ export function FishGuidePage() {
 
               <Group gap="xs" mb="sm">
                 <IconMapPin size={14} color="var(--mantine-color-dimmed)" />
-                <Badge color="teal" variant="light" size="sm">
+                <Badge color="teal" variant="light" size="sm" aria-label={`栖息地：${fish.habitat}`}>
                   {fish.habitat}
                 </Badge>
               </Group>
