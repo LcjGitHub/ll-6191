@@ -23,7 +23,9 @@ import {
 import dayjs from 'dayjs';
 import { getSortedRecords, useRecordStore } from '@/store/recordStore';
 import { WEATHER_COLORS } from '@/constants/weather';
-import { FISHING_METHOD_COLORS } from '@/constants/fishingMethod';
+import { FISHING_METHOD_COLORS, FISHING_METHOD_OPTIONS } from '@/constants/fishingMethod';
+
+const VALID_FISHING_METHODS = new Set(FISHING_METHOD_OPTIONS);
 
 /** 钓鱼记录时间线页 */
 export function TimelinePage() {
@@ -78,9 +80,11 @@ export function TimelinePage() {
                   <Badge color={WEATHER_COLORS[record.weather]} variant="light" size="sm">
                     {record.weather}
                   </Badge>
-                  <Badge color={FISHING_METHOD_COLORS[record.fishingMethod]} variant="light" size="sm">
-                    {record.fishingMethod}
-                  </Badge>
+                  {record.fishingMethod && VALID_FISHING_METHODS.has(record.fishingMethod) && (
+                    <Badge color={FISHING_METHOD_COLORS[record.fishingMethod]} variant="light" size="sm">
+                      {record.fishingMethod}
+                    </Badge>
+                  )}
                 </Group>
                 <ActionIcon
                   variant="subtle"

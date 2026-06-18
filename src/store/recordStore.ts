@@ -10,6 +10,16 @@ interface RecordState {
   importRecords: (records: FishingRecord[]) => void;
 }
 
+const DEFAULT_FISHING_METHOD = '台钓';
+
+function migrateRecords(records: FishingRecord[]): FishingRecord[] {
+  return records.map((r) => ({
+    ...r,
+    fishingMethod: r.fishingMethod ?? DEFAULT_FISHING_METHOD,
+    notes: r.notes ?? '',
+  }));
+}
+
 /** 钓鱼记录 store，持久化至 localStorage */
 export const useRecordStore = create<RecordState>()(
   persist(
@@ -37,6 +47,14 @@ export const useRecordStore = create<RecordState>()(
     }),
     {
       name: 'freshwater-fishing-records',
+      migrate: (persisted) => {
+        const state = persisted as RecordState;
+        if (Array.isArray(state.records)) {
+          state.records = migrateRecords(state.records);
+        }
+        return state;
+      },
+      version: 1,
     },
   ),
 );

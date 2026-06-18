@@ -66,10 +66,23 @@ export function parseImportedText(text: string): ParseResult {
   }
 
   const totalCount = exportData.records.length;
-  const validRecords = exportData.records.filter(isValidRecord);
+  const migratedRecords = exportData.records.map(migrateOldRecord);
+  const validRecords = migratedRecords.filter(isValidRecord);
   const invalidCount = totalCount - validRecords.length;
 
   return { validRecords, totalCount, invalidCount };
+}
+
+const DEFAULT_FISHING_METHOD = '台钓';
+
+function migrateOldRecord(record: unknown): unknown {
+  if (typeof record !== 'object' || record === null) return record;
+  const r = record as Record<string, unknown>;
+  return {
+    ...r,
+    fishingMethod: r.fishingMethod ?? DEFAULT_FISHING_METHOD,
+    notes: r.notes ?? '',
+  };
 }
 
 function isValidRecord(record: unknown): record is FishingRecord {
