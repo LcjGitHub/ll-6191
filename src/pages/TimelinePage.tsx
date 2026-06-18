@@ -100,12 +100,14 @@ export function TimelinePage() {
       <div>
         <Title order={4}>钓鱼时间线</Title>
         <Text size="sm" c="dimmed">
-          共 {filteredRecords.length} 条记录，按日期倒序排列
+          {activeFilter
+            ? `筛选出 ${filteredRecords.length} 条，共 ${sortedRecords.length} 条记录，按日期倒序排列`
+            : `共 ${sortedRecords.length} 条记录，按日期倒序排列`}
         </Text>
       </div>
 
       <Paper withBorder p="md" radius="md">
-        <Group grow align="flex-end">
+        <Group grow align="flex-end" wrap="wrap">
           <Select
             label="按鱼种筛选"
             placeholder="选择鱼种"
@@ -132,6 +134,7 @@ export function TimelinePage() {
               color="gray"
               leftSection={<IconFilterOff size={16} />}
               onClick={handleClearFilter}
+              style={{ flex: '0 0 auto', minWidth: 'fit-content' }}
             >
               清除筛选
             </Button>
