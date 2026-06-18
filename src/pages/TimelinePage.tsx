@@ -18,10 +18,12 @@ import {
   IconScale,
   IconTrash,
   IconPlus,
+  IconClipboard,
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { getSortedRecords, useRecordStore } from '@/store/recordStore';
 import { WEATHER_COLORS } from '@/constants/weather';
+import { FISHING_METHOD_COLORS } from '@/constants/fishingMethod';
 
 /** 钓鱼记录时间线页 */
 export function TimelinePage() {
@@ -76,6 +78,9 @@ export function TimelinePage() {
                   <Badge color={WEATHER_COLORS[record.weather]} variant="light" size="sm">
                     {record.weather}
                   </Badge>
+                  <Badge color={FISHING_METHOD_COLORS[record.fishingMethod]} variant="light" size="sm">
+                    {record.fishingMethod}
+                  </Badge>
                 </Group>
                 <ActionIcon
                   variant="subtle"
@@ -100,6 +105,14 @@ export function TimelinePage() {
                   {record.spot}
                 </Text>
               </Group>
+              {record.notes && (
+                <Group gap={6} align="flex-start">
+                  <IconClipboard size={14} color="var(--mantine-color-dimmed)" style={{ marginTop: 2 }} />
+                  <Text size="sm" c="dimmed" style={{ flex: 1 }} lineClamp={2}>
+                    {record.notes}
+                  </Text>
+                </Group>
+              )}
               <Group gap={6}>
                 <IconCloud size={14} color="var(--mantine-color-dimmed)" />
                 <Text size="xs" c="dimmed">

@@ -1,9 +1,11 @@
 import type { FishingRecord } from '@/types/record';
 import { WEATHER_OPTIONS } from '@/constants/weather';
+import { FISHING_METHOD_OPTIONS } from '@/constants/fishingMethod';
 
 const EXPORT_PREFIX = 'FRESHWATER_FISHING_RECORDS_EXPORT';
 const EXPORT_VERSION = 1;
 const VALID_WEATHERS = new Set(WEATHER_OPTIONS);
+const VALID_FISHING_METHODS = new Set(FISHING_METHOD_OPTIONS);
 
 interface ExportData {
   prefix: typeof EXPORT_PREFIX;
@@ -80,6 +82,9 @@ function isValidRecord(record: unknown): record is FishingRecord {
     typeof r.spot === 'string' &&
     typeof r.weather === 'string' &&
     VALID_WEATHERS.has(r.weather as typeof WEATHER_OPTIONS[number]) &&
+    typeof r.fishingMethod === 'string' &&
+    VALID_FISHING_METHODS.has(r.fishingMethod as typeof FISHING_METHOD_OPTIONS[number]) &&
+    typeof r.notes === 'string' &&
     typeof r.weight === 'number' &&
     typeof r.date === 'string' &&
     typeof r.createdAt === 'string'

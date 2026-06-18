@@ -14,10 +14,11 @@ import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
-import { IconCalendar, IconCloud, IconScale, IconFish, IconStar } from '@tabler/icons-react';
+import { IconCalendar, IconCloud, IconScale, IconFish, IconStar, IconAnchor, IconClipboard } from '@tabler/icons-react';
 import { useState } from 'react';
 import { recordFormSchema, type RecordFormSchema } from '@/schemas/recordSchema';
 import { WEATHER_OPTIONS } from '@/constants/weather';
+import { FISHING_METHOD_OPTIONS } from '@/constants/fishingMethod';
 import { getFishSpecies, getFishSpeciesById } from '@/utils/fishSpecies';
 import { useRecordStore } from '@/store/recordStore';
 import { useFavoriteStore } from '@/store/favoriteStore';
@@ -50,6 +51,8 @@ export function RecordForm() {
       fishSpeciesId: '',
       spot: '',
       weather: undefined,
+      fishingMethod: undefined,
+      notes: '',
       weight: undefined,
       date: new Date(),
     },
@@ -64,6 +67,8 @@ export function RecordForm() {
       fishSpeciesName: species.name,
       spot: values.spot.trim(),
       weather: values.weather,
+      fishingMethod: values.fishingMethod,
+      notes: values.notes.trim(),
       weight: values.weight,
       date: dayjs(values.date).format('YYYY-MM-DD'),
     });
@@ -146,6 +151,40 @@ export function RecordForm() {
                   data={[...WEATHER_OPTIONS]}
                   leftSection={<IconCloud size={16} />}
                   error={errors.weather?.message}
+                />
+              )}
+            />
+
+            <Controller
+              name="fishingMethod"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  label="钓法"
+                  placeholder="选择钓法"
+                  data={[...FISHING_METHOD_OPTIONS]}
+                  leftSection={<IconAnchor size={16} />}
+                  error={errors.fishingMethod?.message}
+                />
+              )}
+            />
+
+            <Controller
+              name="notes"
+              control={control}
+              render={({ field }) => (
+                <Textarea
+                  {...field}
+                  label="备注"
+                  description="可选，不超过 200 字"
+                  placeholder="记录本次作钓的备注信息"
+                  minRows={2}
+                  maxRows={4}
+                  autosize
+                  maxLength={200}
+                  leftSection={<IconClipboard size={16} />}
+                  error={errors.notes?.message}
                 />
               )}
             />
