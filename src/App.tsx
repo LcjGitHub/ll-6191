@@ -3,6 +3,7 @@ import { Layout } from '@/components/Layout';
 import { TimelinePage } from '@/pages/TimelinePage';
 import { NewRecordPage } from '@/pages/NewRecordPage';
 import { StatisticsPage } from '@/pages/StatisticsPage';
+import { FishGuidePage } from '@/pages/FishGuidePage';
 
 /** 路由配置 */
 export function App() {
@@ -13,6 +14,7 @@ export function App() {
           <Route path="/" element={<TimelinePage />} />
           <Route path="/new" element={<NewRecordPage />} />
           <Route path="/统计" element={<StatisticsPage />} />
+          <Route path="/图鉴" element={<FishGuidePage />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,6 +1,6 @@
 import { AppShell, Group, Title, Button, Container, SegmentedControl, Box } from '@mantine/core';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { IconFish, IconPlus, IconChartBar, IconTimeline } from '@tabler/icons-react';
+import { IconFish, IconPlus, IconChartBar, IconTimeline, IconBook } from '@tabler/icons-react';
 
 /** 应用布局：顶栏导航 + 内容区 */
 export function Layout() {
@@ -8,12 +8,17 @@ export function Layout() {
   const navigate = useNavigate();
   const isNewPage = location.pathname === '/new';
   const isStatisticsPage = location.pathname === '/统计';
+  const isGuidePage = location.pathname === '/图鉴';
 
-  const navValue = isStatisticsPage ? 'statistics' : 'timeline';
+  let navValue = 'timeline';
+  if (isStatisticsPage) navValue = 'statistics';
+  if (isGuidePage) navValue = 'guide';
 
   const handleNavChange = (value: string) => {
     if (value === 'statistics') {
       navigate('/统计');
+    } else if (value === 'guide') {
+      navigate('/图鉴');
     } else {
       navigate('/');
     }
@@ -44,6 +49,15 @@ export function Layout() {
                           <Group gap={6} wrap="nowrap">
                             <IconTimeline size={14} />
                             <Box>时间线</Box>
+                          </Group>
+                        ),
+                      },
+                      {
+                        value: 'guide',
+                        label: (
+                          <Group gap={6} wrap="nowrap">
+                            <IconBook size={14} />
+                            <Box>图鉴</Box>
                           </Group>
                         ),
                       },
